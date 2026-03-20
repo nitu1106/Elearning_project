@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # EduSphere — Complete E-Learning Platform
 
 ## Folders
@@ -10,3 +11,5 @@
 3. Open http://localhost:3000
 
 See `elearning-frontend/README.md` for full setup guide.
+=======
+>>>>>>> ca4c81f42dee77d949549e28541202c423e7c6f2
