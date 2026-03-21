@@ -25,7 +25,7 @@ router.get('/', courseController.getAllCourses);
 // ── Protected ─────────────────────────────────────────────────────────────────
 router.use(protect);
 
-// IMPORTANT: specific routes BEFORE /:id
+// specific routes BEFORE /:id
 router.get('/instructor/my-courses',
   authorize('instructor', 'admin'),
   courseController.getInstructorCourses
@@ -61,12 +61,31 @@ router.post('/:id/modules',
   courseController.addModule
 );
 
+// Edit module title
+router.patch('/:id/modules/:moduleId',
+  authorize('instructor', 'admin'),
+  async (req, res) => {
+    try {
+      const Course = require('../models/Course');
+      const course = await Course.findOne({ _id: req.params.id, instructor: req.user._id });
+      if (!course) return res.status(404).json({ success: false, message: 'Course not found.' });
+      const mod = course.modules.id(req.params.moduleId);
+      if (!mod) return res.status(404).json({ success: false, message: 'Module not found.' });
+      if (req.body.title) mod.title = req.body.title;
+      await course.save();
+      res.json({ success: true, message: 'Module updated!', data: course.modules });
+    } catch (e) {
+      res.status(500).json({ success: false, message: e.message });
+    }
+  }
+);
+
 router.delete('/:id/modules/:moduleId',
   authorize('instructor', 'admin'),
   courseController.deleteModule
 );
 
-// ── Lecture routes ────────────────────────────────────────────────────────────
+// ── Lecture routes ─────────────────────────────────────────────────────────────
 router.post('/:courseId/modules/:moduleId/lectures',
   authorize('instructor', 'admin'),
   (req, res, next) => {
@@ -75,6 +94,30 @@ router.post('/:courseId/modules/:moduleId/lectures',
     videoUpload.single('video')(req, res, next);
   },
   courseController.uploadLecture
+);
+
+// Edit lecture
+router.patch('/:courseId/modules/:moduleId/lectures/:lectureId',
+  authorize('instructor', 'admin'),
+  async (req, res) => {
+    try {
+      const Course = require('../models/Course');
+      const course = await Course.findOne({ _id: req.params.courseId, instructor: req.user._id });
+      if (!course) return res.status(404).json({ success: false, message: 'Course not found.' });
+      const mod = course.modules.id(req.params.moduleId);
+      if (!mod) return res.status(404).json({ success: false, message: 'Module not found.' });
+      const lec = mod.lectures.id(req.params.lectureId);
+      if (!lec) return res.status(404).json({ success: false, message: 'Lecture not found.' });
+      if (req.body.title)       lec.title       = req.body.title;
+      if (req.body.description !== undefined) lec.description = req.body.description;
+      if (req.body.videoUrl !== undefined)    lec.videoUrl    = req.body.videoUrl;
+      if (req.body.isFree !== undefined)      lec.isFree      = req.body.isFree;
+      await course.save();
+      res.json({ success: true, message: 'Lecture updated!', data: mod.lectures });
+    } catch (e) {
+      res.status(500).json({ success: false, message: e.message });
+    }
+  }
 );
 
 router.delete('/:courseId/modules/:moduleId/lectures/:lectureId',

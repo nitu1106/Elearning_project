@@ -42,10 +42,18 @@ const updateQuiz = asyncHandler(async (req, res) => {
 
 // Delete quiz
 const deleteQuiz = asyncHandler(async (req, res) => {
-  const quiz = await Quiz.findOne({ _id: req.params.id, instructor: req.user._id });
+  const quiz = await Quiz.findById(req.params.id);
   if (!quiz) return res.status(404).json({ success: false, message: 'Quiz not found.' });
+
+  if (quiz.instructor.toString() !== req.user._id.toString()) {
+    return res.status(403).json({ success: false, message: 'Not authorized.' });
+  }
+
+  // Delete all submissions for this quiz too
+  await Submission.deleteMany({ quiz: quiz._id });
   await quiz.deleteOne();
-  res.json({ success: true, message: 'Quiz deleted.' });
+
+  res.json({ success: true, message: 'Quiz and all submissions deleted.' });
 });
 
 // Toggle publish

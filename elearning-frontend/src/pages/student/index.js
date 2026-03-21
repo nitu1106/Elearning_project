@@ -553,48 +553,16 @@ export const CourseDetailPage = () => {
               }}
             >
               {isYouTube(activeVideo) ? (
-                <div
-                  style={{
-                    background: "var(--bg3)",
-                    padding: 40,
-                    textAlign: "center",
-                  }}
-                >
-                  <div style={{ fontSize: 48, marginBottom: 16 }}>▶️</div>
-                  <h3
-                    style={{ fontFamily: "var(--font-serif)", marginBottom: 8 }}
-                  >
-                    {activeLecture?.title}
-                  </h3>
-                  <p
-                    style={{
-                      color: "var(--text2)",
-                      fontSize: 13,
-                      marginBottom: 20,
-                    }}
-                  >
-                    Click below to watch this lecture on YouTube
-                  </p>
-                  <a
-                    href={activeVideo}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="btn btn-primary btn-lg"
-                    style={{ display: "inline-flex" }}
-                  >
-                    Watch on YouTube
-                  </a>
-                  <p
-                    style={{
-                      fontSize: 12,
-                      color: "var(--text3)",
-                      marginTop: 16,
-                      wordBreak: "break-all",
-                    }}
-                  >
-                    {activeVideo}
-                  </p>
-                </div>
+                <iframe
+                  width="100%"
+                  height="450"
+                  src={`https://www.youtube-nocookie.com/embed/${getYouTubeId(activeVideo)}?rel=0&modestbranding=1&autoplay=1`}
+                  title="Lecture Video"
+                  frameBorder="0"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  allowFullScreen
+                  style={{ display: "block" }}
+                />
               ) : (
                 <video
                   src={activeVideo}
@@ -1008,26 +976,28 @@ export const QuizPage = () => {
 };
 
 export const CertificatesPage = () => {
-  const [data, setData]       = useState(null);
+  const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [viewCert, setViewCert] = useState(null);
 
   useEffect(() => {
-    progressAPI.getDashboard()
-      .then(r => setData(r.data.data))
-      .catch(() => setData({ certificates:[] }))
+    progressAPI
+      .getDashboard()
+      .then((r) => setData(r.data.data))
+      .catch(() => setData({ certificates: [] }))
       .finally(() => setLoading(false));
   }, []);
 
   const certs = data?.certificates || [];
 
   const printCertificate = (cert) => {
-  const studentName = localStorage.getItem('userName') || 
-                      JSON.parse(localStorage.getItem('user') || '{}').name || 
-                      'Student';
-  
-  const win = window.open('', '_blank');
-  win.document.write(`
+    const studentName =
+      localStorage.getItem("userName") ||
+      JSON.parse(localStorage.getItem("user") || "{}").name ||
+      "Student";
+
+    const win = window.open("", "_blank");
+    win.document.write(`
     <!DOCTYPE html>
     <html>
     <head>
@@ -1276,7 +1246,7 @@ export const CertificatesPage = () => {
 
           <div class="completed-text">has successfully completed the course</div>
 
-          <div class="course-name">${cert.course?.title || 'Course'}</div>
+          <div class="course-name">${cert.course?.title || "Course"}</div>
 
           <div class="seal-row">
             <div class="seal-line"></div>
@@ -1288,8 +1258,10 @@ export const CertificatesPage = () => {
             <div class="footer-item">
               <div class="footer-label">Date Issued</div>
               <div class="footer-value">
-                ${new Date(cert.issuedAt).toLocaleDateString('en-IN', { 
-                  year:'numeric', month:'long', day:'numeric' 
+                ${new Date(cert.issuedAt).toLocaleDateString("en-IN", {
+                  year: "numeric",
+                  month: "long",
+                  day: "numeric",
                 })}
               </div>
             </div>
@@ -1307,64 +1279,111 @@ export const CertificatesPage = () => {
     </body>
     </html>
   `);
-  win.document.close();
-};
+    win.document.close();
+  };
 
   return (
     <DashboardLayout title="Certificates">
-      <div style={{ marginBottom:24 }}>
+      <div style={{ marginBottom: 24 }}>
         <h1 className="page-title">My Certificates</h1>
         <p className="page-subtitle">Your earned achievements</p>
       </div>
-      {loading ? <Spinner/> : certs.length === 0
-        ? <div className="empty-state"><Award size={48}/><p>Complete courses to earn certificates</p></div>
-        : (
-          <div className="grid-2">
-            {certs.map(cert => (
-              <div className="card" key={cert._id}
-                style={{ borderColor:'rgba(245,158,11,0.3)', background:'linear-gradient(135deg, var(--bg2), var(--bg3))' }}>
-                <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:16 }}>
-                  <div style={{ width:52, height:52, borderRadius:'50%',
-                    background:'linear-gradient(135deg, #f59e0b, #d97706)',
-                    display:'flex', alignItems:'center', justifyContent:'center',
-                    boxShadow:'0 4px 20px rgba(245,158,11,0.3)', flexShrink:0 }}>
-                    <Award size={24} color="#fff"/>
-                  </div>
-                  <div>
-                    <div style={{ fontWeight:700, fontSize:16, marginBottom:2 }}>
-                      {cert.course?.title}
-                    </div>
-                    <div style={{ fontSize:12, color:'var(--text2)' }}>
-                      Issued {new Date(cert.issuedAt).toLocaleDateString('en-IN', { year:'numeric', month:'long', day:'numeric' })}
-                    </div>
-                  </div>
+      {loading ? (
+        <Spinner />
+      ) : certs.length === 0 ? (
+        <div className="empty-state">
+          <Award size={48} />
+          <p>Complete courses to earn certificates</p>
+        </div>
+      ) : (
+        <div className="grid-2">
+          {certs.map((cert) => (
+            <div
+              className="card"
+              key={cert._id}
+              style={{
+                borderColor: "rgba(245,158,11,0.3)",
+                background: "linear-gradient(135deg, var(--bg2), var(--bg3))",
+              }}
+            >
+              <div
+                style={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 12,
+                  marginBottom: 16,
+                }}
+              >
+                <div
+                  style={{
+                    width: 52,
+                    height: 52,
+                    borderRadius: "50%",
+                    background: "linear-gradient(135deg, #f59e0b, #d97706)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    boxShadow: "0 4px 20px rgba(245,158,11,0.3)",
+                    flexShrink: 0,
+                  }}
+                >
+                  <Award size={24} color="#fff" />
                 </div>
-
-                <div style={{ padding:'10px 14px', background:'rgba(0,0,0,0.2)',
-                  borderRadius:8, marginBottom:16, fontFamily:'monospace',
-                  fontSize:11, color:'var(--text3)', letterSpacing:'0.05em' }}>
-                  ID: {cert.certificateId}
-                </div>
-
-                <div style={{ display:'flex', gap:10 }}>
-                  <button
-                    className="btn btn-gold btn-sm"
-                    style={{ flex:1, justifyContent:'center' }}
-                    onClick={() => printCertificate(cert)}>
-                    <Award size={14}/> View & Download
-                  </button>
-                  {cert.certificateUrl && (
-                    <a href={cert.certificateUrl} target="_blank" rel="noreferrer"
-                      className="btn btn-ghost btn-sm">
-                      PDF
-                    </a>
-                  )}
+                <div>
+                  <div
+                    style={{ fontWeight: 700, fontSize: 16, marginBottom: 2 }}
+                  >
+                    {cert.course?.title}
+                  </div>
+                  <div style={{ fontSize: 12, color: "var(--text2)" }}>
+                    Issued{" "}
+                    {new Date(cert.issuedAt).toLocaleDateString("en-IN", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })}
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
-        )
-      }
+
+              <div
+                style={{
+                  padding: "10px 14px",
+                  background: "rgba(0,0,0,0.2)",
+                  borderRadius: 8,
+                  marginBottom: 16,
+                  fontFamily: "monospace",
+                  fontSize: 11,
+                  color: "var(--text3)",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                ID: {cert.certificateId}
+              </div>
+
+              <div style={{ display: "flex", gap: 10 }}>
+                <button
+                  className="btn btn-gold btn-sm"
+                  style={{ flex: 1, justifyContent: "center" }}
+                  onClick={() => printCertificate(cert)}
+                >
+                  <Award size={14} /> View & Download
+                </button>
+                {cert.certificateUrl && (
+                  <a
+                    href={cert.certificateUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="btn btn-ghost btn-sm"
+                  >
+                    PDF
+                  </a>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
     </DashboardLayout>
   );
 };
