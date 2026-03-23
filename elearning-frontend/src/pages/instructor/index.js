@@ -502,19 +502,30 @@ export const ManageCoursePage = () => {
 
                   {/* Material upload */}
                   <label style={{ cursor:'pointer' }}>
-                    <input type="file" accept=".pdf,.doc,.docx,.ppt,.pptx" style={{ display:'none' }}
-                      onChange={async(e)=>{
+                    <input type="file" accept=".pdf,.doc,.docx,.ppt,.pptx"
+                      style={{ display:'none' }}
+                      onChange={async(e) => {
                         const file = e.target.files[0];
                         if (!file) return;
                         const fd = new FormData();
                         fd.append('file', file);
                         fd.append('name', file.name);
-                        try { await courseAPI.uploadMaterial(id, mod._id, lec._id, fd); toast.success('Material uploaded!'); fetchCourse(); }
-                        catch {}
+                        try {
+                          await courseAPI.uploadMaterial(id, mod._id, lec._id, fd);
+                          toast.success('Material uploaded!');
+                          fetchCourse();
+                        } catch {
+                          toast.error('Material upload requires Cloudinary setup');
+                        }
+                        e.target.value = '';
                       }}/>
-                    <span style={{ background:'rgba(52,211,153,0.08)', border:'1px solid rgba(52,211,153,0.2)',
-                      color:'var(--green)', fontSize:11, fontWeight:600, padding:'5px 10px',
-                      borderRadius:6, cursor:'pointer', display:'flex', alignItems:'center', gap:4 }}>
+                    <span style={{
+                      background:'rgba(52,211,153,0.08)',
+                      border:'1px solid rgba(52,211,153,0.2)',
+                      color:'var(--green)', fontSize:11, fontWeight:600,
+                      padding:'5px 10px', borderRadius:6, cursor:'pointer',
+                      display:'flex', alignItems:'center', gap:4
+                    }}>
                       + Material
                     </span>
                   </label>

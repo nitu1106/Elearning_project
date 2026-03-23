@@ -145,9 +145,9 @@ const getLearningReport = asyncHandler(async (req, res) => {
 
   const topStudents = await Enrollment.aggregate([
     { $match: { status: 'completed' } },
-    { $group: { _id: '$student', completedCourses: { $sum: 1 } } },
+    { $group: { _id: '$student', completedCourses: { $sum: 1 } } }, 
     { $sort: { completedCourses: -1 } }, { $limit: 10 },
-    { $lookup: { from: 'users', localField: '_id', foreignField: '_id', as: 'student', pipeline: [{ $project: { name: 1, email: 1 } }] } },
+    { $lookup: { from: 'users', localField: '_id', foreignField: '_id', as: 'student', pipeline: [{ $project: { name: 1, email: 1 } }] } }, //1 means ->include and o means ->exclude
     { $unwind: '$student' },
   ]);
 

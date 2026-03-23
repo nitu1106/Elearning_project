@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
+import { createPortal } from 'react-dom';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import {
@@ -175,17 +176,25 @@ export const StatusBadge = ({ status }) => {
   return <span className={`badge ${map[status] || 'badge-gray'}`}>{status}</span>;
 };
 
+
+
 export const Modal = ({ open, onClose, title, children }) => {
   if (!open) return null;
-  return (
-    <div style={{ position:'fixed',inset:0,background:'rgba(0,0,0,0.7)',zIndex:100,display:'flex',alignItems:'center',justifyContent:'center',padding:20 }}>
-      <div style={{ background:'var(--bg2)',border:'1px solid var(--border)',borderRadius:'var(--radius-lg)',width:'100%',maxWidth:560,maxHeight:'90vh',overflowY:'auto' }}>
-        <div style={{ display:'flex',alignItems:'center',justifyContent:'space-between',padding:'20px 24px',borderBottom:'1px solid var(--border)' }}>
-          <span style={{ fontFamily:'var(--font-serif)',fontSize:18 }}>{title}</span>
-          <button onClick={onClose} style={{ background:'none',border:'none',color:'var(--text2)' }}><X size={18}/></button>
+  return createPortal(  // ← wrap with portal
+    <div style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.7)', zIndex:9999, // ← 100 → 9999
+      display:'flex', alignItems:'center', justifyContent:'center', padding:20 }}>
+      <div style={{ background:'var(--bg2)', border:'1px solid var(--border)', borderRadius:'var(--radius-lg)',
+        width:'100%', maxWidth:560, maxHeight:'90vh', overflowY:'auto' }}>
+        <div style={{ display:'flex', alignItems:'center', justifyContent:'space-between',
+          padding:'20px 24px', borderBottom:'1px solid var(--border)' }}>
+          <span style={{ fontFamily:'var(--font-serif)', fontSize:18 }}>{title}</span>
+          <button onClick={onClose} style={{ background:'none', border:'none', color:'var(--text2)' }}>
+            <X size={18}/>
+          </button>
         </div>
         <div style={{ padding:'24px' }}>{children}</div>
       </div>
-    </div>
+    </div>,
+    document.body  // ← renders outside DashboardLayout entirely
   );
 };

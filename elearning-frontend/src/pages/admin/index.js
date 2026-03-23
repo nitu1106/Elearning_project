@@ -391,7 +391,7 @@ export const AdminReportsPage = () => {
           {topCourses.slice(0,8).map((c,i)=>(
             <div key={c._id} style={{ display:'flex',justifyContent:'space-between',alignItems:'center',padding:'8px 0',borderBottom:'1px solid var(--border)' }}>
               <div style={{ display:'flex',alignItems:'center',gap:10 }}>
-                <span style={{ fontSize:11,color:'var(--text3)',minWidth:20 }}>#{i+1}</span>
+                <span style={{ fontSize:11,color:'var(--text3)',minWidth:20 }}>{i+1}</span>
                 <span style={{ fontSize:13,fontWeight:500 }}>{c.title}</span>
               </div>
               <div style={{ display:'flex',gap:8,alignItems:'center' }}>

@@ -735,7 +735,12 @@ export const CourseDetailPage = () => {
                         <a
                           key={mi2}
                           href={mat.url}
-                          target="_blank"
+                          download={
+                            mat.url?.startsWith("data:") ? mat.name : undefined
+                          }
+                          target={
+                            mat.url?.startsWith("data:") ? "_self" : "_blank"
+                          }
                           rel="noreferrer"
                           style={{
                             display: "flex",
@@ -748,6 +753,17 @@ export const CourseDetailPage = () => {
                         >
                           <FileText size={12} />
                           {mat.name || `Material ${mi2 + 1}`}
+                          {mat.url?.startsWith("data:") && (
+                            <span
+                              style={{
+                                fontSize: 10,
+                                color: "var(--text3)",
+                                marginLeft: 4,
+                              }}
+                            >
+                              (download)
+                            </span>
+                          )}
                         </a>
                       ))}
                     </div>
