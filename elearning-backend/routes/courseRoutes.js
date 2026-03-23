@@ -128,7 +128,11 @@ router.delete('/:courseId/modules/:moduleId/lectures/:lectureId',
 // ── Material routes ───────────────────────────────────────────────────────────
 router.post('/:courseId/modules/:moduleId/lectures/:lectureId/materials',
   authorize('instructor', 'admin'),
-  materialUpload.single('file'),
+  (req, res, next) => {
+    const ct = req.headers['content-type'] || '';
+    if (ct.includes('application/json')) return next();
+    materialUpload.single('file')(req, res, next);
+  },
   courseController.uploadMaterial
 );
 

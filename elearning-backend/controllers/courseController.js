@@ -126,15 +126,20 @@ const deleteCourse = asyncHandler(async (req, res) => {
   if (cloudinary) {
     for (const mod of course.modules) {
       for (const lec of mod.lectures) {
-        if (lec.publicId) {
-          await cloudinary.uploader.destroy(lec.publicId, { resource_type: 'video' }).catch(() => {});
-        }
+        if (lec.publicId) await cloudinary.uploader.destroy(lec.publicId, { resource_type: 'video' }).catch(() => {});
       }
     }
   }
 
+  const Certificate  = require('../models/Certificate');
+  const Submission   = require('../models/Submission');
+
+  // Delete everything related to this course
   await course.deleteOne();
   await Enrollment.deleteMany({ course: course._id });
+  await Certificate.deleteMany({ course: course._id });   // ← add this
+  await Submission.deleteMany({ course: course._id });    // ← add this
+
   res.json({ success: true, message: 'Course deleted successfully.' });
 });
 
