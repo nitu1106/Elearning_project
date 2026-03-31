@@ -4,7 +4,7 @@ const router  = express.Router();
 const { protect, authorize } = require('../middleware/authMiddleware');
 const courseController = require('../controllers/courseController');
 
-// Safe Cloudinary upload — fallback to multer memory
+//Safe Cloudinary upload — fallback to multer memory
 const upload = multer({ storage: multer.memoryStorage() });
 let thumbUpload    = upload;
 let videoUpload    = upload;
@@ -126,13 +126,10 @@ router.delete('/:courseId/modules/:moduleId/lectures/:lectureId',
 );
 
 // ── Material routes ───────────────────────────────────────────────────────────
+// ✅ For the materials route, just skip multer entirely
 router.post('/:courseId/modules/:moduleId/lectures/:lectureId/materials',
   authorize('instructor', 'admin'),
-  (req, res, next) => {
-    const ct = req.headers['content-type'] || '';
-    if (ct.includes('application/json')) return next();
-    materialUpload.single('file')(req, res, next);
-  },
+  express.json(),               // ← just parse JSON
   courseController.uploadMaterial
 );
 

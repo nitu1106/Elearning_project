@@ -722,52 +722,20 @@ export const CourseDetailPage = () => {
                       </button>
                     )}
                   </div>
-                  {lec.materials?.length > 0 && (
-                    <div
-                      style={{
-                        paddingLeft: 24,
-                        display: "flex",
-                        flexDirection: "column",
-                        gap: 4,
-                      }}
-                    >
-                      {lec.materials.map((mat, mi2) => (
-                        <a
-                          key={mi2}
-                          href={mat.url}
-                          download={
-                            mat.url?.startsWith("data:") ? mat.name : undefined
-                          }
-                          target={
-                            mat.url?.startsWith("data:") ? "_self" : "_blank"
-                          }
-                          rel="noreferrer"
-                          style={{
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 6,
-                            fontSize: 12,
-                            color: "var(--accent)",
-                            textDecoration: "none",
-                          }}
-                        >
-                          <FileText size={12} />
-                          {mat.name || `Material ${mi2 + 1}`}
-                          {mat.url?.startsWith("data:") && (
-                            <span
-                              style={{
-                                fontSize: 10,
-                                color: "var(--text3)",
-                                marginLeft: 4,
-                              }}
-                            >
-                              (download)
-                            </span>
-                          )}
-                        </a>
-                      ))}
-                    </div>
-                  )}
+                 {lec.materials?.length > 0 && (
+                                     <div style={{ paddingLeft:24, display:'flex', flexDirection:'column', gap:4 }}>
+                                       {lec.materials.map((mat, mi2) => (
+                                         <a key={mi2}
+                                           href={mat.url}
+                                           download={mat.name}
+                                           target="_blank"
+                                           rel="noreferrer"
+                                           style={{ display:'flex', alignItems:'center', gap:6, fontSize:12, color:'var(--accent)', textDecoration:'none' }}>
+                                           <FileText size={12}/>{mat.name || `Material ${mi2+1}`}
+                                         </a>
+                                       ))}
+                                     </div>
+                                   )}
                 </div>
               ))}
             </div>

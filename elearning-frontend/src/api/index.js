@@ -82,10 +82,18 @@ export const courseAPI = {
 deleteLecture: (cid, mid, lid) => API.delete(
   `/courses/${cid}/modules/${mid}/lectures/${lid}`
 ),
-  uploadMaterial: (cid, mid, lid, data) => API.post(
-    `/courses/${cid}/modules/${mid}/lectures/${lid}/materials`,
-    data
-  ),
+  uploadMaterial: (cid, mid, lid, data) => {
+    // If data has url (from disk upload) — send as JSON
+    if (data && data.url && !(data instanceof FormData)) {
+      return API.post(
+        `/courses/${cid}/modules/${mid}/lectures/${lid}/materials`,
+        data,
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+    // FormData (Cloudinary) — send as multipart
+    return API.post(`/courses/${cid}/modules/${mid}/lectures/${lid}/materials`, data);
+  },
 };
 
 // ── Enrollment ────────────────────────────────────────────────────────────────

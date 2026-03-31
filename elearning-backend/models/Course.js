@@ -6,11 +6,11 @@ const lectureSchema = new mongoose.Schema({
   videoUrl:    { type: String },         // Cloudinary URL
   publicId:    { type: String },         // Cloudinary public_id for deletion
   duration:    { type: Number, default: 0 }, // seconds
-  materials: [{
-    name:  String,
-    url:   String,
-    type:  String,
-  }],
+ materials: [{
+  name:     { type: String, required: true },
+  url:      { type: String, required: true },
+  fileType: { type: String, default: 'application/octet-stream' }, // ← rename from 'type'
+}],
   order:       { type: Number, default: 0 },
   isFree:      { type: Boolean, default: false },
 }, { timestamps: true });
